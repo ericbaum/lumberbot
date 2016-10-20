@@ -4,11 +4,13 @@ import time
 import gtk
 import pyautogui
 
-def pixel_at(x, y):
+def get_pixels():
     rw = gtk.gdk.get_default_root_window()
-    pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, False, 8, 1, 1)
-    pixbuf = pixbuf.get_from_drawable(rw, rw.get_colormap(), x, y, 0, 0, 1, 1)
-    return tuple(pixbuf.pixel_array[0, 0])
+    pix1 = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, False, 8, 1, 1)
+    pix2 = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, False, 8, 1, 1)
+    pix1 = pix1.get_from_drawable(rw, rw.get_colormap(), 954, 566, 0, 0, 1, 1)
+    pix2 = pix2.get_from_drawable(rw, rw.get_colormap(), 1045, 566, 0, 0, 1, 1)
+    return pix1.pixel_array[0, 0][0], pix2.pixel_array[0, 0][0]
 
 def main():
     max_score = int(sys.argv[1])
@@ -18,15 +20,18 @@ def main():
     pyautogui.press(' ')
 
     time.sleep(2)
+    pyautogui.press('left', 2, 0.2)
 
     while score < max_score:
-        pixel_left = pixel_at(954, 567)
-        pixel_right = pixel_at(1045, 567)
-        if pixel_right[0] < pixel_left[0]:
-            pyautogui.press('left', 2, interval=0.08)
-        else:
-            pyautogui.press('right', 2, interval=0.08)
-	time.sleep(0.12)
+        pix1, pix2 = get_pixels()
+	print str(pix1) + ' ' + str(pix2)
+	if pix2 < pix1:
+            pyautogui.press('left', 2, 0.1)
+        elif pix2 > pix1:
+            pyautogui.press('right', 2, 0.1)
+	else:
+            continue
+	time.sleep(0.1)
 
         score += 2
 
