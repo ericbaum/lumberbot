@@ -1,18 +1,14 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 import sys
 import time
+import gtk
 import pyautogui
-import gi
-gi.require_version('Gdk', '3.0')
-from gi.repository import Gdk
-
-w = Gdk.get_default_root_window()
-
 
 def pixel_at(x, y):
-    pb = Gdk.pixbuf_get_from_window(w, x, y, 1, 1)
-    return pb.get_pixels()
-
+    rw = gtk.gdk.get_default_root_window()
+    pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, False, 8, 1, 1)
+    pixbuf = pixbuf.get_from_drawable(rw, rw.get_colormap(), x, y, 0, 0, 1, 1)
+    return tuple(pixbuf.pixel_array[0, 0])
 
 def main():
     max_score = int(sys.argv[1])
@@ -24,13 +20,13 @@ def main():
     time.sleep(2)
 
     while score < max_score:
-        pixel_left = pixel_at(916, 618)
-        pixel_right = pixel_at(1016, 618)
-
+        pixel_left = pixel_at(954, 567)
+        pixel_right = pixel_at(1045, 567)
         if pixel_right[0] < pixel_left[0]:
-            pyautogui.press('left', 2, interval=0.09)
+            pyautogui.press('left', 2, interval=0.08)
         else:
-            pyautogui.press('right', 2, interval=0.09)
+            pyautogui.press('right', 2, interval=0.08)
+	time.sleep(0.12)
 
         score += 2
 
